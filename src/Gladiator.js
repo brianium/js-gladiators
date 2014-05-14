@@ -1,10 +1,13 @@
 var Gladiator = function(name, str, agi, mnd, hp, mp) {
   this.name = name;
+
   this.str = str;
   this.agi = agi;
   this.mnd = mnd;
+
   this.hp = hp;
   this.mp = mp;
+
   this.weapon = null;
   this.armor = null;
 };
@@ -17,34 +20,33 @@ Gladiator.prototype = {
     this.armor = armor;
   },
   attack: function(gladiator) {
-    var power = this.str + this.weapon.damage;
-    var defense = gladiator.str + gladiator.armor.defense;
+    //base damage
+    var baseDamage = this.str * 1.3,
+        modifier = (Math.random() / 3) + 1,
+        weaponDamage = this.weapon && this.weapon.damage || 0,
+        totalDamage = (baseDamage * modifier) + weaponDamage;
 
-    if (this.can_dodge(gladiator)) {
-      return false;
+    //opponent defense
+    var armor = gladiator.armor && gladiator.armor.defense || 0,
+        armorMod = armor / 100;
+
+    totalDamage = Math.round(totalDamage - (totalDamage * armorMod));
+
+    //dodge check
+    var chance = Math.ceil(Math.random() * gladiator.agi) * 3,
+        hit = Math.ceil(Math.random() * 100),
+        isDodged = hit <= chance;
+
+    if (isDodged) {
+      return 0;
     }
 
-    var damage = power - defense;
-    
-    if (damage <= 0) {
-      return false;
-    }
+    gladiator.hp -= totalDamage;
 
-    gladiator.hp -= damage;
-
-    return true;
+    return totalDamage;
   },
-  can_dodge: function(gladiator) {
-    var chanceToHit = 50 - gladiator.agi,
-        dodgeValue = Math.ceil(Math.random() * chanceToHit),
-        dodgeRange = [3, 5, 9, 12, 15, 19];
-
-        return dodgeRange.some(function(d) {
-          return d === dodgeValue;
-        });
-  },
-  is_dead: function {
-    return gladiator.hp <= 0;
+  isDead: function() {
+    return this.hp <= 0;
   }
 };
 
