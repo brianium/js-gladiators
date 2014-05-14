@@ -1,12 +1,12 @@
-var Gladiator = function(name, str, agi, mnd, hp, mp) {
+var Gladiator = function(name, str, agi, stm, mnd) {
   this.name = name;
 
   this.str = str;
   this.agi = agi;
+  this.stm = stm;
   this.mnd = mnd;
 
-  this.hp = hp;
-  this.mp = mp;
+  this.hp = 50 + (stm * 3);
 
   this.weapon = null;
   this.armor = null;
@@ -32,18 +32,28 @@ Gladiator.prototype = {
 
     totalDamage = Math.round(totalDamage - (totalDamage * armorMod));
 
+    //hit roll
+    var hit = Math.ceil(Math.random() * 100);
+
     //dodge check
-    var chance = Math.ceil(Math.random() * gladiator.agi) * 3,
-        hit = Math.ceil(Math.random() * 100),
+    var chance = Math.ceil(Math.random() * gladiator.agi) * 5,
         isDodged = hit <= chance;
 
+    //critical hit
+    var critChance = Math.ceil(Math.random() * this.agi) * 3,
+        isCrit = hit <= critChance;
+
     if (isDodged) {
-      return 0;
+      return {dmg:0, was_dodged: true, was_crit: false};
+    }
+
+    if (isCrit) {
+      totalDamage = totalDamage * 2;
     }
 
     gladiator.hp -= totalDamage;
 
-    return totalDamage;
+    return {dmg:totalDamage, was_dodged: false, was_crit: isCrit};
   },
   isDead: function() {
     return this.hp <= 0;
