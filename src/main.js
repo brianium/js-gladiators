@@ -1,5 +1,5 @@
 //our gladiators
-var ryan = new Gladiator("Ryan the Ravenous", 10, 5, 0, 50, 0); 
+var ryan = new Gladiator("Ryan the Ravenous", 10, 5, 0, 50, 0);
 var brian = new Gladiator("Brian the Nimble", 2, 13, 0, 50, 0);
 
 //equip some weapons and armor
@@ -9,29 +9,35 @@ ryan.equipArmor(new Armor('Shield of Shielding', 5));
 brian.equipWeapon(new Weapon('Supah Shiv', 8));
 brian.equipArmor(new Armor('Bum Clothes', 2));
 
-//game loop
-while(!ryan.isDead() && !brian.isDead()) {
+var game = {
 
-  var ryanHit = ryan.attack(brian);
-  if(ryanHit) {
-    alert(ryan.name + " hit " + brian.name + " for " + ryanHit + " and " + brian.name + " is now at " + brian.hp);
-    if (brian.isDead()) {
-      alert(brian.name + " is vanquished!!");
-      break;
+    run: function(player1, player2) {
+        while (!player1.isDead() && !player2.isDead()) {
+
+            var player1Hit = player1.attack(player2);
+            if (player1Hit) {
+                alert(player1.name + " hit " + player2.name + " for " + player1Hit + " and " + player2.name + " is now at " + player2.hp);
+                if (player2.isDead()) {
+                    alert(player2.name + " is vanquished!!");
+                    break;
+                }
+            } else {
+                alert(player2.name + " Dodged");
+            }
+
+            var player2Hit = player2.attack(player1);
+            if (player2Hit) {
+                alert(player2.name + " hit " + player1.name + " for " + player2Hit + " and " + player1.name + " is now at " + player1.hp);
+                if (player1.isDead()) {
+                    alert(player1.name + " is vanquished!!");
+                    break;
+                }
+            } else {
+                alert(player1.name + " Dodged");
+            }
+
+        }
     }
-  } else {
-    alert(brian.name + " Dodged");
-  }
-
-  var brianHit = brian.attack(ryan);
-  if(brianHit) {
-    alert(brian.name + " hit " + ryan.name + " for " + brianHit + " and " + ryan.name + " is now at " + ryan.hp);
-    if (ryan.isDead()) {
-      alert(ryan.name + " is vanquished!!");
-      break;
-    }
-  } else {
-    alert(ryan.name + " Dodged");
-  }
-
 }
+
+game.run(ryan, brian);
